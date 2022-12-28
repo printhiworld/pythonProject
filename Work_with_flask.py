@@ -1,8 +1,12 @@
 from flask import Flask
 from main import load_candidates
-from main import get_by_pk
+from main import get_by_id
 from main import get_by_skill
+from main import get_by_name
+
 app = Flask(__name__)
+
+
 @app.route("/")
 def page_index():
     s = ''
@@ -10,12 +14,14 @@ def page_index():
         s += Get_code_of_candidat(candidat)
     return s
 
-@app.route("/candidates/<pk>")
-def page_candidat(pk):
-    candidat = get_by_pk(pk)
+
+@app.route("/candidates/<id>")
+def page_candidat(id):
+    candidat = get_by_id(id)
     s = ''
     s += Get_code_of_candidat(candidat)
     return s
+
 
 @app.route("/skills/<skill_name>")
 def page_skills(skill_name):
@@ -24,14 +30,25 @@ def page_skills(skill_name):
         s += Get_code_of_candidat(candidat)
     return s
 
+
+@app.route("/search/<name>")
+def page_name(name):
+    s = ''
+    for candidat in get_by_name(name):
+        s += Get_code_of_candidat(candidat)
+    return s
+
+
+
 def Get_code_of_candidat(candidat):
     return f'''
     <img src="{candidat['picture']}" >
     <pre>
-  Имя кандидата - <a href="/candidates/{candidat['pk']}">{candidat['name']}</a>
-  Позиция кандидата - {candidat['position']}
-  Навыки через запятую - {candidat['skills']}
+    Имя кандидата - <a href="/candidates/{candidat['id']}">{candidat['name']}</a>
+    Позиция кандидата - {candidat['position']}
+    Навыки через запятую - {candidat['skills']}
 
-</pre>'''
+    </pre>'''
+
 
 app.run()
